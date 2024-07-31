@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Login</title>
+  </head>
+
+  <body>
+    <main>
+      <div class="login-container">
+        <form class="login-form" action="" id="login">
+          <input
+            class="login-form__input"
+            type="text"
+            name="username"
+            placeholder="Username"
+            id="username"
+            required />
+          <input
+            class="login-form__input"
+            type="password"
+            name="password"
+            placeholder="Password"
+            id="password"
+            required />
+          <button
+            class="login-form__button login-form__button--disabled"
+            id="login-button"
+            type="submit">
+            Login
+          </button>
+        </form>
+        <div class="login-container__forgot-password">
+          <a href="#">Forgot password?</a>
+        </div>
+      </div>
+    </main>
+    <script>
+      const usernameInput = document.getElementById("username");
+      const passwordInput = document.getElementById("password");
+      const loginButton = document.getElementById("login-button");
+
+      function checkFormFields() {
+        const usernameValue = usernameInput.value.trim();
+        const passwordValue = passwordInput.value.trim();
+
+        if (usernameValue.length > 0 && passwordValue.length > 0) {
+          loginButton.classList.remove("login-form__button--disabled");
+          loginButton.classList.add("login-form__button--enabled");
+        } else {
+          loginButton.classList.remove("login-form__button--enabled");
+          loginButton.classList.add("login-form__button--disabled");
+        }
+      }
+
+      usernameInput.addEventListener("input", checkFormFields);
+      passwordInput.addEventListener("input", checkFormFields);
+    </script>
+  </body>
+</html>
