@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <h1>Register</h1>
+    <form id="registerForm">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password (6 character min.)" required>
+        <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a href="login.html">Login</a></p>
+    <div id="message"></div>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const messageDiv = document.getElementById('message');
+            try {
+                const response = await fetch('/api/users/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(Object.fromEntries(formData))
+                });
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                const data = await response.json();
+                console.log('Response data:', data);
+                if (response.ok) {
+                    messageDiv.textContent = 'Registration successful!';
+                    messageDiv.style.color = 'green';
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1000);
+                } else {
+                    throw new Error(data.error || 'Error occurred. Is password at least 6 characters long?');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                messageDiv.textContent = `Registration failed: ${error.message}`;
+                messageDiv.style.color = 'red';
+            }
+        });
+    </script>
+</body>
+</html>

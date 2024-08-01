@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <h1>Account Information</h1>
+    <div id="accountInfo"></div>
+    <button id="logoutBtn">Logout</button>
+    <script>
+        async function fetchAccountInfo() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+            const response = await fetch('/api/users/account', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('accountInfo').innerHTML = `
+                    <p>Username: ${data.username}</p>
+                    <p>Email: ${data.email}</p>
+                `;
+            } else {
+                alert('Failed to fetch account information');
+                window.location.href = 'login.html';
+            }
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+        });
+
+        fetchAccountInfo();
+    </script>
+</body>
+</html
