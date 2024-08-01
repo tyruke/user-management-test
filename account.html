@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Account Info</title>
+  </head>
+
+  <body>
+    <main>
+      <div class="account-container">
+        <div class="account-info">
+          <h1 class="account-info__heading">Account Info</h1>
+          <p>
+            <span class="account-info__title">Username:</span
+            ><span id="account-info__username">Username here</span>
+          </p>
+          <p>
+            <span class="account-info__title">Email:</span
+            ><span id="account-info__email">Email here</span>
+          </p>
+          <div class="change-password">
+            <h2 class="change-password__heading">Change Password</h2>
+            <form class="change-password-form" action="" id="change-password">
+              <input
+                class="change-password-form__input"
+                type="password"
+                name="current-password"
+                id="current-password"
+                placeholder="Current password"
+                required />
+              <input
+                class="change-password-form__input"
+                type="password"
+                name="new-password"
+                id="new-password"
+                placeholder="New password"
+                required />
+              <input
+                class="change-password-form__input"
+                type="password"
+                name="confirm-new-password"
+                id="confirm-new-password"
+                placeholder="Confirm new password"
+                required />
+              <button
+                class="change-password-form__button change-password-form__button--disabled"
+                id="change-password-button"
+                type="submit">
+                Submit
+              </button>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+      const currentPasswordInput = document.getElementById("current-password");
+      const newPasswordInput = document.getElementById("new-password");
+      const confirmNewPasswordInput = document.getElementById("confirm-new-password");
+      const changePasswordButton = document.getElementById("change-password-button");
+
+      function checkFormFields() {
+        const currentPasswordValue = currentPasswordInput.value.trim();
+        const newPasswordValue = newPasswordInput.value.trim();
+        const confirmNewPasswordValue = confirmNewPasswordInput.value.trim();
+
+        if (
+          currentPasswordValue.length > 0 &&
+          newPasswordValue.length > 0 &&
+          confirmNewPasswordValue.length > 0 &&
+          newPasswordValue === confirmNewPasswordValue
+        ) {
+          changePasswordButton.classList.remove(
+            "change-password-form__button--disabled"
+          );
+          changePasswordButton.classList.add(
+            "change-password-form__button--enabled"
+          );
+        } else {
+          changePasswordButton.classList.remove(
+            "change-password-form__button--enabled"
+          );
+          changePasswordButton.classList.add(
+            "change-password-form__button--disabled"
+          );
+        }
+      }
+
+      currentPasswordInput.addEventListener("input", checkFormFields);
+      newPasswordInput.addEventListener("input", checkFormFields);
+      confirmNewPasswordInput.addEventListener("input", checkFormFields);
+    </script>
+  </body>
+</html>
