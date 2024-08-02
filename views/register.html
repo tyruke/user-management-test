@@ -11,43 +11,44 @@
       <div class="registration-container">
         <h1>Register</h1>
         <form class="registration-form" action="" id="registration">
-          <label for="username">Username:</label>
           <input
             class="registration-form__input"
             type="text"
             name="username"
             id="username"
-            required
-          />
-          <label for="email">Email:</label>
+            placeholder="Username"
+            required />
           <input
             class="registration-form__input"
             type="text"
             name="email"
             id="email"
-            required
-          />
-          <label for="password">Password:</label>
+            placeholder="Email"
+            required />
           <input
             class="registration-form__input"
             type="password"
             name="password"
             id="password"
-            required
-          />
+            placeholder="Password"
+            required />
+          <input
+            class="registration-form__input"
+            type="password"
+            name="confirm-password"
+            id="confirm-password"
+            placeholder="Confirm password"
+            required />
           <button
             class="registration-form__button registration-form__button--disabled"
             id="registration-button"
-            type="submit"
-          >
+            type="submit">
             Register
           </button>
           <div id="registration-form__message"></div>
         </form>
         <div class="registration-container__a-login">
-          <p>
-              Already have an account? <a href="login.html">Login!</a>
-          </p>
+          <p>Already have an account? <a href="/login.html">Login!</a></p>
         </div>
       </div>
     </main>
@@ -55,18 +56,21 @@
     <script>
       const usernameInput = document.getElementById("username");
       const passwordInput = document.getElementById("password");
+      const confirmPasswordInput = document.getElementById("confirm-password");
       const emailInput = document.getElementById("email");
       const registrationButton = document.getElementById("registration-button");
 
       function checkFormFields() {
         const usernameValue = usernameInput.value.trim();
         const passwordValue = passwordInput.value.trim();
+        const confirmPasswordValue = confirmPasswordInput.value.trim();
         const emailValue = emailInput.value.trim();
 
         if (
           usernameValue.length > 0 &&
           passwordValue.length > 0 &&
-          emailValue.length > 0
+          emailValue.length > 0 &&
+          passwordValue === confirmPasswordValue
         ) {
           registrationButton.classList.remove(
             "registration-form__button--disabled"
@@ -86,6 +90,7 @@
 
       usernameInput.addEventListener("input", checkFormFields);
       passwordInput.addEventListener("input", checkFormFields);
+      confirmPasswordInput.addEventListener("input", checkFormFields);
       emailInput.addEventListener("input", checkFormFields);
 
       document
