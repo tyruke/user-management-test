@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Account Info</title>
+  </head>
+
+  <body>
+    <main>
+      <div class="account-container">
+        <div class="account-info">
+          <h1 class="account-info__heading">Account Info</h1>
+          <p>
+            <span class="account-info__title">Username:</span>
+            <span id="account-info__username"></span>
+          </p>
+          <p>
+            <span class="account-info__title">Email:</span>
+            <span id="account-info__email"></span>
+          </p>
+          <div class="change-password">
+            <h2 class="change-password__heading">Change Password</h2>
+            <form class="change-password-form" action="" id="change-password">
+              <input
+                class="change-password-form__input"
+                type="password"
+                name="current-password"
+                id="current-password"
+                placeholder="Current password"
+                required
+              />
+              <input
+                class="change-password-form__input"
+                type="password"
+                name="new-password"
+                id="new-password"
+                placeholder="New password"
+                required
+              />
+              <input
+                class="change-password-form__input"
+                type="password"
+                name="confirm-new-password"
+                id="confirm-new-password"
+                placeholder="Confirm new password"
+                required
+              />
+              <button
+                class="change-password-form__button change-password-form__button--disabled"
+                id="change-password-button"
+                type="submit"
+              >
+                Submit
+              </button>
+              <button
+                class="account-container__logout-button"
+                id="logout-button"
+              >
+                Logout
+              </button>
+              <div class="account-container__message" id="message"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+      const currentPasswordInput = document.getElementById("current-password");
+      const newPasswordInput = document.getElementById("new-password");
+      const confirmNewPasswordInput = document.getElementById(
+        "confirm-new-password"
+      );
+      const changePasswordButton = document.getElementById(
+        "change-password-button"
+      );
+      const messageDiv = document.getElementById("message");
+
+      function checkFormFields() {
+        const currentPasswordValue = currentPasswordInput.value.trim();
+        const newPasswordValue = newPasswordInput.value.trim();
+        const confirmNewPasswordValue = confirmNewPasswordInput.value.trim();
+
+        if (
+          currentPasswordValue.length > 0 &&
+          newPasswordValue.length > 0 &&
+          confirmNewPasswordValue.length > 0 &&
+          newPasswordValue === confirmNewPasswordValue
+        ) {
+          changePasswordButton.classList.remove(
+            "change-password-form__button--disabled"
+          );
+          changePasswordButton.classList.add(
+            "change-password-form__button--enabled"
+          );
+        } else {
+          changePasswordButton.classList.remove(
+            "change-password-form__button--enabled"
+          );
+          changePasswordButton.classList.add(
+            "change-password-form__button--disabled"
+          );
+        }
+      }
+
+      currentPasswordInput.addEventListener("input", checkFormFields);
+      newPasswordInput.addEventListener("input", checkFormFields);
+      confirmNewPasswordInput.addEventListener("input", checkFormFields);
+
+      //Back end code
+
+      document.addEventListener("DOMContentLoaded", function () {
+        // Fetch and display user account info
+        fetchAccountInfo();
+
+        // Add event listener for change password form
+        document
+          .getElementById("change-password")
+          .addEventListener("submit", changePassword);
+      });
+
+      async function fetchAccountInfo() {
+        try {
+          const response = await fetch("/api/users/account", {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+          const data = await response.json();
+
+          if (response.ok) {
+            document.getElementById("account-info__username").textContent =
+              data.username;
+            document.getElementById("account-info__email").textContent =
+              data.email;
+          } else {
+            console.error("Error fetching account info:", data.error);
+          }
+        } catch (error) {
+          console.error("Error fetching account info:", error);
+        }
+      }
+
+      async function changePassword(e) {
+        e.preventDefault();
+
+        const currentPassword =
+          document.getElementById("current-password").value;
+        const newPassword = document.getElementById("new-password").value;
+        const confirmPassword = document.getElementById(
+          "confirm-new-password"
+        ).value;
+
+        try {
+          const response = await fetch("/api/users/change-password", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({
+              currentPassword,
+              newPassword,
+              confirmPassword,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            toggleMsg("Password change successful!", "success", 2000)
+
+            // Clear the form
+            e.target.reset();
+          } else {
+           toggleMsg(`Error: ${
+              data.error || data.errors.map((err) => err.msg).join(", ")
+            }`, "err", 3000)
+          }
+        } catch (error) {
+          console.error("Error changing password:", error);
+         toggleMsg("An error occurred while changing the password", "err", 3000)
+        }
+      }
+
+      function logout() {
+        localStorage.removeItem("token");
+        window.location.href = "/login.html";
+      }
+
+      //Handle showing error messages
+      function toggleMsg(message, type, duration) {
+        if (type !== "err") {
+            messageDiv.style.color = 'green';
+        }else {
+            messageDiv.style.color = 'red';
+        }
+        messageDiv.textContent = message;
+        messageDiv.style.display = "block";
+        setTimeout(() => {
+            messageDiv.style.display = 'none';
+        }, duration)
+      }
+
+
+      // Add event listener for logout button
+      document
+        .getElementById("logout-button")
+        .addEventListener("click", logout);
+    </script>
+  </body>
+</html>
