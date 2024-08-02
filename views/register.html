@@ -1,51 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register</title>
-    <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
-    <h1>Register</h1>
-    <form id="registerForm">
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="password" name="password" placeholder="Password (6 character min.)" required>
-        <button type="submit">Register</button>
-    </form>
-    <p>Already have an account? <a href="login.html">Login</a></p>
-    <div id="message"></div>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main>
+      <div class="registration-container">
+        <h1>Register</h1>
+        <form class="registration-form" action="" id="registration">
+          <label for="username">Username:</label>
+          <input
+            class="registration-form__input"
+            type="text"
+            name="username"
+            id="username"
+            required
+          />
+          <label for="email">Email:</label>
+          <input
+            class="registration-form__input"
+            type="text"
+            name="email"
+            id="email"
+            required
+          />
+          <label for="password">Password:</label>
+          <input
+            class="registration-form__input"
+            type="password"
+            name="password"
+            id="password"
+            required
+          />
+          <button
+            class="registration-form__button registration-form__button--disabled"
+            id="registration-button"
+            type="submit"
+          >
+            Register
+          </button>
+          <div id="registration-form__message"></div>
+        </form>
+        <div class="registration-container__a-login">
+          <p>
+              Already have an account? <a href="login.html">Login!</a>
+          </p>
+        </div>
+      </div>
+    </main>
+
     <script>
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const messageDiv = document.getElementById('message');
-            try {
-                const response = await fetch('/api/users/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(Object.fromEntries(formData))
-                });
-                console.log('Response status:', response.status);
-                console.log('Response headers:', response.headers);
-                const data = await response.json();
-                console.log('Response data:', data);
-                if (response.ok) {
-                    messageDiv.textContent = 'Registration successful!';
-                    messageDiv.style.color = 'green';
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 1000);
-                } else {
-                    throw new Error(data.error || 'Error occurred. Is password at least 6 characters long?');
-                }
-            } catch (error) {
-                console.error('Registration error:', error);
-                messageDiv.textContent = `Registration failed: ${error.message}`;
-                messageDiv.style.color = 'red';
+      const usernameInput = document.getElementById("username");
+      const passwordInput = document.getElementById("password");
+      const emailInput = document.getElementById("email");
+      const registrationButton = document.getElementById("registration-button");
+
+      function checkFormFields() {
+        const usernameValue = usernameInput.value.trim();
+        const passwordValue = passwordInput.value.trim();
+        const emailValue = emailInput.value.trim();
+
+        if (
+          usernameValue.length > 0 &&
+          passwordValue.length > 0 &&
+          emailValue.length > 0
+        ) {
+          registrationButton.classList.remove(
+            "registration-form__button--disabled"
+          );
+          registrationButton.classList.add(
+            "registration-form__button--enabled"
+          );
+        } else {
+          registrationButton.classList.remove(
+            "registration-form__button--enabled"
+          );
+          registrationButton.classList.add(
+            "registration-form__button--disabled"
+          );
+        }
+      }
+
+      usernameInput.addEventListener("input", checkFormFields);
+      passwordInput.addEventListener("input", checkFormFields);
+      emailInput.addEventListener("input", checkFormFields);
+
+      document
+        .getElementById("registration")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target);
+          const messageDiv = document.getElementById(
+            "registration-form__message"
+          );
+          try {
+            const response = await fetch("/api/users/register", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(Object.fromEntries(formData)),
+            });
+            console.log("Response status:", response.status);
+            console.log("Response headers:", response.headers);
+            const data = await response.json();
+            console.log("Response data:", data);
+            if (response.ok) {
+              messageDiv.textContent = "Registration successful!";
+              messageDiv.style.color = "green";
+              setTimeout(() => {
+                window.location.href = "login.html";
+              }, 2000);
+            } else {
+              throw new Error(
+                data.error ||
+                  "Error occurred. Is password at least 6 characters long?"
+              );
             }
+          } catch (error) {
+            console.error("Registration error:", error);
+            messageDiv.textContent = `Registration failed: ${error.message}`;
+            messageDiv.style.color = "red";
+          }
         });
     </script>
-</body>
+  </body>
 </html>

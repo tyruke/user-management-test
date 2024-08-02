@@ -100,6 +100,53 @@ router.get('/account', authenticateToken, async (req, res) => {
 });
 
 
+// Change password
+router.post('/change-password', authenticateToken, [
+  body('currentPassword').notEmpty().withMessage('Current password is required'),
+  body('newPassword').isLength({ min: 6 }).withMessage('New password must be at least 6 characters long'),
+  body('confirmPassword').custom((value, { req }) => {
+    if (value !== req.body.newPassword) {
+      throw new Error('Password confirmation does not match new password');
+    }
+    return true;
+  }),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const { currentPassword, newPassword } = req.body;
+    
+    // Get the user from the database
+    const [users] = await pool.execute('SELECT * FROM users WHERE id = ?', [req.userId]);
+    
+    if (users.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    // Check if the current password is correct
+    const validPassword = await comparePassword(currentPassword, users[0].password);
+    
+    if (!validPassword) {
+      return res.status(401).json({ error: 'Current password is incorrect' });
+    }
+    
+    // Hash the new password
+    const hashedPassword = await hashPassword(newPassword);
+    
+    // Update the user's password in the database
+    await pool.execute('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, req.userId]);
+    
+    res.json({ message: 'Password changed successfully' });
+  } catch (error) {
+    console.error('Error changing password:', error);
+    res.status(500).json({ error: 'Error changing password' });
+  }
+});
+
+
 
 // Request password reset
 router.post('/reset-password-request', [

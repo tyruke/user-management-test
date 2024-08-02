@@ -18,20 +18,31 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // Serve HTML files from the 'views' directory
-app.use('/views', express.static(path.join(__dirname, 'views')));
+app.use(express.static(path.join(__dirname, 'views')));
 
 // API Routes
 app.use('/api/users', userRoutes);
 
 // Serve index.html for the root route
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'register.html'));
+  res.sendFile(path.join(__dirname, 'views', 'login.html'));
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong!');
 });
 
 // Database connection
-connectToDatabase();
-
-// Start the server
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
+connectToDatabase()
+  .then(() => {
+    console.log('Connected to database successfully');
+    // Start the server
+    app.listen(port, () => {
+      console.log(`Server running on http://localhost:${port}`);
+    });
+  })
+  .catch((error) => {
+    console.error('Failed to connect to the database:', error);
+  });
