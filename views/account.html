@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="styles.css" />
     <title>Account Info</title>
   </head>
 
@@ -21,7 +21,7 @@
             <span id="account-info__email"></span>
           </p>
           <div class="change-password">
-            <p class="change-password__heading">Change Password :</p>
+            <h2 class="change-password__heading">Change Password</h2>
             <form class="change-password-form" action="" id="change-password">
               <input
                 class="change-password-form__input"
@@ -54,7 +54,12 @@
               >
                 Submit
               </button>
-              <a href="/login.html" id="logout-button">Logout</a>
+              <button
+                class="account-container__logout-button"
+                id="logout-button"
+              >
+                Logout
+              </button>
               <div class="account-container__message" id="message"></div>
             </form>
           </div>
